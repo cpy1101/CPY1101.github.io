@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>做自己的安全小卫士</title>
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:url("campus_bg.jpg") center center / cover no-repeat fixed;
+}
+.container{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:min(2vw,10px);
+    background:transparent;
+}
+#boardWrap{
+    width:min(92vw,820px);
+    height:min(92vw,820px);
+    position:relative;
+    border:none;
+    border-radius:18px;
+    background:transparent;
+    margin-bottom:20px;
+    overflow:hidden;
+}
+.board-inner{
+    position:relative;
+    width:100%;
+    height:100%;
+}
+.board-title{
+    display:none;
+}
+@keyframes gridPop{
+    0%{transform:scale(0.6);opacity:0;}
+    100%{transform:scale(1);opacity:1;}
+}
+.grid{
+    position:absolute;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:clamp(12px,2.4vw,14px);
+    font-weight:600;
+    color:#111;
+    box-shadow:inset 0 -2px 0 rgba(0,0,0,0.08);
+    animation:gridPop 0.4s ease-out forwards;
+    opacity:0;
+}
+.grid-number{
+    font-size:clamp(13px,2.4vw,16px);
+    font-weight:bold;
+    color:#222;
+    text-shadow:1px 1px 2px rgba(255,255,255,0.7);
+}
+.player{
+    width:clamp(28px,6.5vw,36px);
+    height:clamp(28px,6.5vw,36px);
+    background:radial-gradient(circle at 35% 35%,#ff9494 0%,#e53745 45%,#b51c2c 100%);
+    border-radius:50%;
+    position:absolute;
+    z-index:10;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-weight:bold;
+    font-size:clamp(12px,2.2vw,15px);
+    transition:all 0.4s cubic-bezier(0.22,1,0.36,1);
+    box-shadow:
+        0 3px 8px #0004,
+        inset 0 -3px 0 #b51c2c,
+        inset 0 3px 6px #fff4;
+}
+.dice-area{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+    margin-bottom:24px;
+}
+.dice-row{
+    display:flex;
+    gap:min(6vw,24px);
+    align-items:center;
+}
+#diceBox{
+    width:clamp(32px,7vw,44px);
+    height:clamp(32px,7vw,44px);
+    perspective:90px;
+}
+.dice{
+    width:100%;
+    height:100%;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform 0.55s ease;
+}
+@keyframes diceShake{
+    0%{transform:rotateX(0deg) rotateY(0deg);}
+    25%{transform:rotateX(90deg) rotateY(90deg);}
+    50%{transform:rotateX(180deg) rotateY(180deg);}
+    75%{transform:rotateX(270deg) rotateY(270deg);}
+    100%{transform:rotateX(360deg) rotateY(360deg);}
+}
+.dice-shake{
+    animation:diceShake 0.08s infinite linear;
+}
+.dice-face{
+    position:absolute;
+    width:44px;
+    height:44px;
+    background:#fff;
+    border:2px solid #333;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:4px;
+}
+.dice-face-inner{
+    width:100%;
+    height:100%;
+    position:relative;
+}
+.dot{
+    width:clamp(6px,1.6vw,9px);
+    height:clamp(6px,1.6vw,9px);
+    border-radius:50%;
+    background:#222;
+    position:absolute;
+}
+.dice-face-1{transform:translateZ(22px);}
+.dice-face-2{transform:rotateY(180deg) translateZ(22px);}
+.dice-face-3{transform:rotateY(90deg) translateZ(22px);}
+.dice-face-4{transform:rotateY(-90deg) translateZ(22px);}
+.dice-face-5{transform:rotateX(90deg) translateZ(22px);}
+.dice-face-6{transform:rotateX(-90deg) translateZ(22px);}
+#diceBtn{
+    width:clamp(84px,20vw,100px);
+    height:clamp(42px,8.5vw,52px);
+    border-radius:12px;
+    background:#2563eb;
+    color:#fff;
+    border:none;
+    font-size:clamp(14px,2.6vw,16px);
+    font-weight:bold;
+    cursor:pointer;
+}
+#diceBtn:disabled{
+    background:#8899bb;
+    cursor:not-allowed;
+}
+.btns-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+.bottom-btn{
+    padding:8px 14px;
+    border:none;
+    border-radius:8px;
+    background:#3b82f6;
+    color:#fff;
+    font-size:clamp(13px,2.4vw,15px);
+    cursor:pointer;
+}
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.65);
+    z-index:999;
+    align-items:center;
+    justify-content:center;
+    padding:min(5vw,20px);
+}
+.modal-box{
+    width:100%;
+    max-width:440px;
+    background:#fff;
+    border-radius:16px;
+    padding:min(6vw,26px);
+}
+.question{
+    font-size:clamp(16px,3vw,17px);
+    margin-bottom:min(5vw,20px);
+}
+.opt{
+    padding:min(4vw,14px);
+    border:1px solid #ddd;
+    border-radius:9px;
+    margin-bottom:min(3vw,10px);
+    cursor:pointer;
+    font-size:clamp(15px,2.8vw,16px);
+}
+.opt:hover{
+    background:#e8f0fe;
+}
+.tip{
+    margin-top:min(4vw,16px);
+    display:none;
+    font-size:clamp(15px,2.8vw,16px);
+}
+.correct{color:#239b56;font-weight:bold;}
+.wrong{color:#d63031;font-weight:bold;}
+.success-box{text-align:center;}
+.restart-btn{
+    margin-top:min(5vw,20px);
+    padding:min(3vw,12px) min(7vw,28px);
+    background:#2563eb;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    font-size:clamp(15px,2.8vw,16px);
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div id="boardWrap">
+        <div class="board-inner"></div>
+    </div>
+    <div class="dice-area">
+        <div class="dice-row">
+            <div id="diceBox">
+                <div class="dice" id="diceEl">
+                    <div class="dice-face dice-face-1">
+                        <div class="dice-face-inner">
+                            <span class="dot" style="top:50%;left:50%;transform:translate(-50%,-50%);"></span>
+                        </div>
+                    </div>
+                    <div class="dice-face dice-face-2">
+                        <div class="dice-face-inner">
+                            <span class="dot" style="top:10%;left:10%;"></span>
+                            <span class="dot" style="bottom:10%;right:10%;"></span>
+                        </div>
+                    </div>
+                    <div class="dice-face dice-face-3">
+                        <div class="dice-face-inner">
+                            <span class="dot" style="top:10%;left:10%;"></span>
+                            <span class="dot" style="top:50%;left:50%;transform:translate(-50%,-50%);"></span>
+                            <span class="dot" style="bottom:10%;right:10%;"></span>
+                        </div>
+                    </div>
+                    <div class="dice-face dice-face-4">
+                        <div class="dice-face-inner">
+                            <span class="dot" style="top:10%;left:10%;"></span>
+                            <span class="dot" style="top:10%;right:10%;"></span>
+                            <span class="dot" style="bottom:10%;left:10%;"></span>
+                            <span class="dot" style="bottom:10%;right:10%;"></span>
+                        </div>
+                    </div>
+                    <div class="dice-face dice-face-5">
+                        <div class="dice-face-inner">
+                            <span class="dot" style="top:10%;left:10%;"></span>
+                            <span class="dot" style="top:10%;right:10%;"></span>
+                            <span class="dot" style="top:50%;left:50%;transform:translate(-50%,-50%);"></span>
+                            <span class="dot" style="bottom:10%;left:10%;"></span>
+                            <span class="dot" style="bottom:10%;right:10%;"></span>
+                        </div>
+                    </div>
+                    <div class="dice-face dice-face-6">
+                        <div class="dice-face-inner">
+                            <span class="dot" style="top:10%;left:10%;"></span>
+                            <span class="dot" style="top:10%;right:10%;"></span>
+                            <span class="dot" style="top:50%;left:10%;transform:translateY(-50%);"></span>
+                            <span class="dot" style="top:50%;right:10%;transform:translateY(-50%);"></span>
+                            <span class="dot" style="bottom:10%;left:10%;"></span>
+                            <span class="dot" style="bottom:10%;right:10%;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="diceBtn">掷骰子</button>
+        </div>
+    </div>
+    <div class="btns-row">
+        <button class="bottom-btn" onclick="window.location.href='game_rule.html'">游戏规则</button>
+        <button class="bottom-btn" onclick="restartGame()">重新开始</button>
+        <button id="musicToggle" class="bottom-btn">开启背景音乐</button>
+    </div>
+</div>
+<div class="modal" id="quizModal">
+    <div class="modal-box">
+        <div class="question" id="qText"></div>
+        <div id="optWrap"></div>
+        <div class="tip" id="tipText"></div>
+    </div>
+</div>
+<div class="modal" id="winModal">
+    <div class="modal-box success-box">
+        <h2>🎉 闯关成功</h2>
+        <p style="margin:15px 0;color:#666;">恭喜完成平安闯关普法小游戏全部关卡！</p>
+        <button class="restart-btn" onclick="restartGame()">再来一局</button>
+    </div>
+</div>
+<audio id="bgMusic" loop preload="auto">
+    <source src="happy_time.mp3">
+
+<audio id="soundDice" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-dice-roll-1071.mp3">
+
+<audio id="soundStepForward" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3">
+
+<audio id="soundStepBack" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3">
+
+<audio id="soundRight" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3">
+
+<audio id="soundWrong" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3">
+
+<audio id="soundGridPop" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3">
+
+
+<script>
+const AUDIO_VOLUME = 0.45;
+let audioUnlocked = false;
+const questionList = [
+    {q:"同学长期给他人起侮辱外号、故意孤立他人，属于下列哪一种行为？",opts:["正常玩笑","校园欺凌","友好互动"],answer:1,explain:"语言侮辱、社交孤立都属于校园欺凌，遇到要及时告诉老师和家长。",encourage:"很棒！你学会识别校园欺凌了！"},
+    {q:"遭遇校园欺凌时，更合适的做法是？",opts:["默默忍受","及时告知师长","找人报复对方"],answer:1,explain:"不要隐忍，也不要以暴制暴，第一时间寻求可信任成年人的保护。",encourage:"正确！遇到欺凌要勇敢求助！"},
+    {q:"看到同学被欺凌时，我们应当？",opts:["围观起哄","在保证安全的前提下报告老师","假装没看见"],answer:1,explain:"不做冷漠旁观者，但也不要盲目上前阻止，先求助成年人更安全。",encourage:"做得好！拒绝冷漠，智慧求助！"},
+    {q:"网上恶意P图、造谣、辱骂同学，属于什么行为？",opts:["只是娱乐","网络欺凌","不算违法"],answer:1,explain:"网络暴力和造谣伤害他人，同样可能违反法律。",encourage:"正确！网络发言也要守底线！"},
+    {q:"陌生人给的奶茶、糖果、饮料，我们应该？",opts:["直接收下","坚决拒绝并离开","先谢谢再收下"],answer:1,explain:"陌生人赠送的食品饮料可能存在风险，要学会拒绝和求助。",encourage:"很棒！提高警惕，保护自己！"},
+    {q:"关于毒品，下列说法正确的是？",opts:["尝一口不会上瘾","毒品危害身心健康，要远离","只有成年人才会吸毒"],answer:1,explain:"毒品对身体、家庭和社会危害极大，无论什么情况都要坚决远离。",encourage:"正确！珍爱生命，远离毒品！"},
+    {q:"如果有人让你保守让你不舒服的身体接触秘密，你应该？",opts:["遵守秘密","告诉可信任的大人","害怕不敢说"],answer:1,explain:"让你不舒服、害怕或受伤的秘密不需要遵守，要勇敢求助。",encourage:"非常好！危险秘密一定要说出来！"},
+    {q:"下列哪个部位通常属于隐私部位？",opts:["手掌","背心和内裤覆盖区域","额头"],answer:1,explain:"隐私部位不能随意让他人触碰，也不能随意暴露给他人。",encourage:"答对了！学会保护自己的身体边界！"},
+    {q:"遇到有人在网络上诱导你提供家庭住址、学校和电话，你应该？",opts:["直接告诉对方","拒绝并告诉家长","觉得好玩继续聊"],answer:1,explain:"个人信息不能随便透露给陌生人，遇到诱导要立即求助。",encourage:"正确！保护个人信息很重要！"},
+    {q:"当你和同学发生矛盾时，应该怎么做？",opts:["争吵动手","冷静沟通或请老师帮助","一直冷战"],answer:1,explain:"遇到矛盾要理性沟通，无法解决时可以请老师、家长帮助。",encourage:"很棒！学会理性解决冲突！"},
+    {q:"发现有人校园里强行索要同学财物，我们应该？",opts:["上前制止","远离并及时报告老师","假装没看见"],answer:1,explain:"优先保证自身安全，不正面冲突，及时求助老师。",encourage:"正确！智慧求助，保护自己和同学！"},
+    {q:"关于校园欺凌，以下说法正确的是？",opts:["被欺凌者要自己解决","欺凌是错的，旁观者也可以帮助制止","只有打架才算欺凌"],answer:1,explain:"欺凌行为有很多种，语言、社交孤立、网络伤害都不应该被忽视。",encourage:"很棒！你对校园安全有清楚的认识！"}
+];
+let unusedQuestions = [];
+function resetQuestionPool(){
+    unusedQuestions = [...questionList];
+    shuffleArray(unusedQuestions);
+}
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+resetQuestionPool();
+
+const path = [
+    {x:0.00, y:0.84, w:0.20, h:0.16},
+    {x:0.20, y:0.84, w:0.20, h:0.16},
+    {x:0.40, y:0.84, w:0.20, h:0.16},
+    {x:0.60, y:0.84, w:0.20, h:0.16},
+    {x:0.80, y:0.84, w:0.20, h:0.16},
+    {x:0.80, y:0.68, w:0.20, h:0.16},
+    {x:0.80, y:0.52, w:0.20, h:0.16},
+    {x:0.80, y:0.36, w:0.20, h:0.16},
+    {x:0.80, y:0.20, w:0.20, h:0.16},
+    {x:0.60, y:0.20, w:0.20, h:0.16},
+    {x:0.40, y:0.20, w:0.20, h:0.16},
+    {x:0.20, y:0.20, w:0.20, h:0.16},
+    {x:0.00, y:0.20, w:0.20, h:0.16},
+    {x:0.00, y:0.36, w:0.20, h:0.16},
+    {x:0.00, y:0.52, w:0.20, h:0.16},
+    {x:0.00, y:0.68, w:0.20, h:0.16},
+    {x:0.20, y:0.68, w:0.20, h:0.16},
+    {x:0.40, y:0.68, w:0.20, h:0.16},
+    {x:0.40, y:0.52, w:0.20, h:0.16}
+];
+
+const gridColor = [
+    "#FFB3BA","#FFDFBA","#FFFFBA","#BAFFC9","#BAE1FF",
+    "#FFB3BA","#FFDFBA","#FFFFBA","#BAFFC9",
+    "#BAE1FF","#FFB3BA","#FFDFBA","#FFFFBA",
+    "#BAFFC9","#BAE1FF","#FFB3BA","#FFDFBA","#FFFFBA","#BAFFC9"
+];
+
+let pos = 0;
+const totalCell = path.length;
+let playerDom;
+let moving = false;
+
+const diceBtn = document.getElementById("diceBtn");
+const diceEl = document.getElementById("diceEl");
+const quizModal = document.getElementById("quizModal");
+const winModal = document.getElementById("winModal");
+const qText = document.getElementById("qText");
+const optWrap = document.getElementById("optWrap");
+const tipText = document.getElementById("tipText");
+const bgMusic = document.getElementById("bgMusic");
+const soundDice = document.getElementById("soundDice");
+const soundStepForward = document.getElementById("soundStepForward");
+const soundStepBack = document.getElementById("soundStepBack");
+const soundRight = document.getElementById("soundRight");
+const soundWrong = document.getElementById("soundWrong");
+const soundGridPop = document.getElementById("soundGridPop");
+bgMusic.volume = 0.28;
+soundDice.volume = AUDIO_VOLUME;
+soundStepForward.volume = AUDIO_VOLUME;
+soundStepBack.volume = AUDIO_VOLUME;
+soundRight.volume = AUDIO_VOLUME;
+soundWrong.volume = AUDIO_VOLUME;
+soundGridPop.volume = 0.3;
+const musicToggle = document.getElementById("musicToggle");
+let musicPlay = false;
+
+document.body.addEventListener('click', unlockAudio, {once:true});
+document.body.addEventListener('touchstart', unlockAudio, {once:true});
+
+function unlockAudio(){
+    if(audioUnlocked) return;
+    const tempAudio = soundGridPop;
+    tempAudio.play().then(()=>{
+        tempAudio.pause();
+        tempAudio.currentTime=0;
+        audioUnlocked = true;
+    }).catch(e=>{});
+}
+
+musicToggle.onclick = function(){
+    unlockAudio();
+    if(!musicPlay){
+        bgMusic.play().then(()=>{
+            musicPlay = true;
+            musicToggle.innerText = "关闭背景音乐";
+        }).catch(e=>{});
+    }else{
+        bgMusic.pause();
+        musicPlay = false;
+        musicToggle.innerText = "开启背景音乐";
+    }
+};
+function playAudio(audio){
+    if(!audioUnlocked) return;
+    audio.currentTime = 0;
+    audio.play().catch(err=>{});
+}
+
+function initBoard(){
+    const innerWrap = document.querySelector(".board-inner");
+    innerWrap.innerHTML = "";
+    for(let i = 0; i < path.length; i++){
+        const cell = document.createElement("div");
+        cell.className = "grid";
+        cell.style.background = gridColor[i];
+        cell.style.left = (path[i].x * 100) + "%";
+        cell.style.top = (path[i].y * 100) + "%";
+        cell.style.width = (path[i].w * 100) + "%";
+        cell.style.height = (path[i].h * 100) + "%";
+        const delay = (i * 0.04);
+        cell.style.animationDelay = delay + "s";
+        const numSpan = document.createElement("span");
+        numSpan.className = "grid-number";
+        numSpan.innerText = String(i + 1);
+        cell.appendChild(numSpan);
+        innerWrap.appendChild(cell);
+    }
+    playerDom = document.createElement("div");
+    playerDom.className = "player";
+    playerDom.innerText = "棋";
+    innerWrap.appendChild(playerDom);
+    updatePlayer();
+}
+
+function updatePlayer(){
+    const cell = path[pos];
+    playerDom.style.left = (cell.x * 100 + (cell.w * 100) / 2) + "%";
+    playerDom.style.top = (cell.y * 100 + (cell.h * 100) / 2) + "%";
+    playerDom.style.transform = "translate(-50%,-50%)";
+}
+
+function setDice(num){
+    let rotate;
+    switch(num){
+        case 1: rotate = "rotateX(0deg) rotateY(0deg)"; break;
+        case 2: rotate = "rotateY(180deg)"; break;
+        case 3: rotate = "rotateY(90deg)"; break;
+        case 4: rotate = "rotateY(-90deg)"; break;
+        case 5: rotate = "rotateX(90deg)"; break;
+        case 6: rotate = "rotateX(-90deg)"; break;
+    }
+    diceEl.style.transform = rotate;
+}
+
+diceBtn.onclick = async function(){
+    unlockAudio();
+    if(moving) return;
+    moving = true;
+    diceBtn.disabled = true;
+    playAudio(soundDice);
+    diceEl.classList.add("dice-shake");
+    const num = Math.floor(Math.random()*6)+1;
+    await sleep(350);
+    diceEl.classList.remove("dice-shake");
+    setDice(num);
+    for(let i=0;i<num;i++){
+        pos++;
+        if(pos >= totalCell){
+            pos = totalCell - 1;
+            updatePlayer();
+            setTimeout(()=>{
+                winModal.style.display = "flex";
+                moving = false;
+                diceBtn.disabled = false;
+            },400);
+            return;
+        }
+        updatePlayer();
+        playAudio(soundStepForward);
+        await sleep(400);
+    }
+    moving = false;
+    showQuiz();
+}
+
+async function moveBackStep(step){
+    moving = true;
+    for(let i=0;i<step;i++){
+        pos = Math.max(0, pos - 1);
+        updatePlayer();
+        playAudio(soundStepBack);
+        await sleep(400);
+    }
+    moving = false;
+    diceBtn.disabled = false;
+}
+
+function sleep(t){
+    return new Promise(res=>setTimeout(res,t));
+}
+
+function showQuiz(){
+    if(unusedQuestions.length === 0) resetQuestionPool();
+    const qData = unusedQuestions.shift();
+    qText.innerText = qData.q;
+    optWrap.innerHTML = "";
+    tipText.style.display = "none";
+    qData.opts.forEach((optStr,idx)=>{
+        const div = document.createElement("div");
+        div.className = "opt";
+        div.innerText = optStr;
+        div.onclick = async ()=>{
+            tipText.style.display = "block";
+            const allOpt = optWrap.querySelectorAll(".opt");
+            allOpt.forEach(o=>o.style.pointerEvents="none");
+            if(idx === qData.answer){
+                playAudio(soundRight);
+                tipText.innerHTML = `<span class="correct">✅ ${qData.encourage}</span>`;
+                setTimeout(()=>{
+                    quizModal.style.display = "none";
+                    diceBtn.disabled = false;
+                },2000);
+            }else{
+                playAudio(soundWrong);
+                tipText.innerHTML = `<span class="wrong">❌ ${qData.explain}</span>`;
+                setTimeout(async ()=>{
+                    quizModal.style.display = "none";
+                    await moveBackStep(2);
+                },2200);
+            }
+        };
+        optWrap.appendChild(div);
+    });
+    quizModal.style.display = "flex";
+}
+
+function restartGame(){
+    pos = 0;
+    moving = false;
+    winModal.style.display = "none";
+    quizModal.style.display = "none";
+    resetQuestionPool();
+    initBoard();
+    diceBtn.disabled = false;
+}
+
+window.addEventListener("resize",initBoard);
+initBoard();
+</script>
+</body>
+</html>
