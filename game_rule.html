@@ -12,71 +12,59 @@
     font-family:"Microsoft YaHei",PingFang SC,sans-serif;
 }
 body{
-    background:
-        radial-gradient(circle at 10% 10%, #fff8c8 0 8%, transparent 9%),
-        radial-gradient(circle at 90% 18%, #dff3ff 0 9%, transparent 10%),
-        radial-gradient(circle at 15% 85%, #e4ffd6 0 9%, transparent 10%),
-        linear-gradient(135deg,#f7faff 0%,#eaf6ff 100%);
+    background:#eaf6ff;
     min-height:100vh;
-    padding:30px 16px;
+    display:flex;
+    align-items:center;
+    padding:10px;
 }
 .wrap{
-    max-width:700px;
+    width:100%;
+    max-width:640px;
     margin:0 auto;
     background:#fff;
-    border-radius:18px;
-    border:3px solid #2563eb;
-    padding:26px 24px;
+    border-radius:14px;
+    border:2px solid #2563eb;
+    padding:16px;
 }
 h1{
     text-align:center;
     color:#2563eb;
-    margin-bottom:24px;
-    font-size:clamp(22px,5vw,26px);
+    margin-bottom:12px;
+    font-size:20px;
 }
 h2{
     color:#1d4ed8;
-    margin:20px 0 10px;
-    font-size:clamp(18px,4vw,20px);
+    margin:10px 0 4px;
+    font-size:16px;
 }
 p,li{
-    font-size:16px;
-    line-height:1.75;
+    font-size:14px;
+    line-height:1.5;
     color:#333;
 }
 ul{
-    padding-left:22px;
-    margin-bottom:16px;
+    padding-left:20px;
+    margin-bottom:8px;
 }
 .btn-box{
     text-align:center;
-    margin-top:32px;
-}
-.start-btn{
-    padding:14px 36px;
-    background:#2563eb;
-    color:#fff;
-    font-size:18px;
-    border:none;
-    border-radius:12px;
-    cursor:pointer;
-    text-decoration:none;
-    display:inline-block;
-}
-.color-desc{
+    margin-top:16px;
     display:flex;
     gap:12px;
+    justify-content:center;
     flex-wrap:wrap;
-    margin:12px 0;
 }
-.tag{
-    padding:4px 10px;
-    border-radius:6px;
-    font-size:15px;
+.btn{
+    padding:10px 24px;
+    background:#2563eb;
+    color:#fff;
+    font-size:16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    text-decoration:none;
 }
-.tag-red{background:#ffd6d6;color:#b32424;}
-.tag-yellow{background:#fff7cc;color:#cc7700;}
-.tag-green{background:#d8f8dd;color:#1e7728;}
 </style>
 </head>
 <body>
@@ -84,31 +72,49 @@ ul{
     <h1>平安闯关普法飞行棋｜游戏规则</h1>
     <h2>🎯 游戏目标</h2>
     <p>操控棋子从起点出发，抵达第19号终点格子，完成普法闯关。</p>
-
     <h2>📖 玩法说明</h2>
     <ul>
-        <li>点击【掷骰子】随机获得点数，棋子向前移动对应步数。</li>
-        <li>棋子停止移动后，弹出普法选择题进行作答。</li>
-        <li>回答正确，可继续掷骰子前进；回答错误，棋子后退2步。</li>
-        <li>成功抵达终点即为闯关胜利！</li>
+        <li>点击【掷骰子】随机点数，棋子向前走对应步数</li>
+        <li>棋子停下弹出普法选择题作答</li>
+        <li>答对可继续掷骰子；答错后退2步</li>
+        <li>走到终点即闯关胜利</li>
     </ul>
-
-    <h2>📚 题目知识范围</h2>
+    <h2>📚 题目范围</h2>
     <ul>
-        <li>校园欺凌防范、网络安全保护</li>
-        <li>青少年自我保护、隐私安全</li>
-        <li>禁毒知识、人际交往矛盾处理</li>
+        <li>校园欺凌、网络安全、隐私保护</li>
+        <li>青少年自我保护、禁毒、矛盾处理</li>
     </ul>
-
-    <h2>⚠️ 温馨提示</h2>
+    <h2>💡 小提示</h2>
     <ul>
-        <li>点击【开启背景音乐】按钮，可以自由开启/关闭游戏音效。</li>
-        <li>首次进入游戏，请先点击页面任意位置，音效才能正常播放。</li>
+        <li>首次点击页面才能播放音频</li>
     </ul>
-
     <div class="btn-box">
-        <a class="start-btn" href="index.html">开始游戏</a>
+        <button class="btn" id="ruleMusicBtn">开启背景音乐</button>
+        <a class="btn" href="index.html">开始游戏</a>
     </div>
 </div>
+
+<audio id="ruleBgm" loop preload="auto">
+    <source src="happy_time.mp3" type="audio/mpeg">
+<script>
+let musicOpen = false;
+const bgm = document.getElementById("ruleBgm");
+const btn = document.getElementById("ruleMusicBtn");
+bgm.volume = 0.28;
+document.body.addEventListener("click", unlock, {once:true});
+document.body.addEventListener("touchstart", unlock, {once:true});
+function unlock(){}
+btn.onclick = function(){
+    if(!musicOpen){
+        bgm.play();
+        musicOpen = true;
+        btn.innerText = "关闭背景音乐";
+    }else{
+        bgm.pause();
+        musicOpen = false;
+        btn.innerText = "开启背景音乐";
+    }
+}
+</script>
 </body>
 </html>
