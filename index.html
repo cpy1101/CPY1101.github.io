@@ -391,14 +391,27 @@ function shuffleArray(arr){
 }
 resetQuestionPool();
 
+// 全部格子改为正方形 w=0.18 h=0.18，尺寸更大，16/17/18水平对齐一行
 const path = [
-    {x:0.00, y:0.84, w:0.20, h:0.16},{x:0.20, y:0.84, w:0.20, h:0.16},{x:0.40, y:0.84, w:0.20, h:0.16},
-    {x:0.60, y:0.84, w:0.20, h:0.16},{x:0.80, y:0.84, w:0.20, h:0.16},{x:0.80, y:0.68, w:0.20, h:0.16},
-    {x:0.80, y:0.52, w:0.20, h:0.16},{x:0.80, y:0.36, w:0.20, h:0.16},{x:0.80, y:0.20, w:0.20, h:0.16},
-    {x:0.60, y:0.20, w:0.20, h:0.16},{x:0.40, y:0.20, w:0.20, h:0.16},{x:0.20, y:0.20, w:0.20, h:0.16},
-    {x:0.00, y:0.20, w:0.20, h:0.16},{x:0.00, y:0.36, w:0.20, h:0.16},{x:0.00, y:0.52, w:0.20, h:0.16},
-    {x:0.00, y:0.68, w:0.20, h:0.16},{x:0.20, y:0.68, w:0.20, h:0.16},{x:0.40, y:0.68, w:0.20, h:0.16},
-    {x:0.40, y:0.52, w:0.20, h:0.16}
+    {x:0.015, y:0.84, w:0.18, h:0.14},
+    {x:0.205, y:0.84, w:0.18, h:0.14},
+    {x:0.395, y:0.84, w:0.18, h:0.14},
+    {x:0.585, y:0.84, w:0.18, h:0.14},
+    {x:0.775, y:0.84, w:0.18, h:0.14},
+    {x:0.775, y:0.69, w:0.18, h:0.14},
+    {x:0.775, y:0.53, w:0.18, h:0.14},
+    {x:0.775, y:0.37, w:0.18, h:0.14},
+    {x:0.775, y:0.21, w:0.18, h:0.14},
+    {x:0.585, y:0.21, w:0.18, h:0.14},
+    {x:0.395, y:0.21, w:0.18, h:0.14},
+    {x:0.205, y:0.21, w:0.18, h:0.14},
+    {x:0.015, y:0.21, w:0.18, h:0.14},
+    {x:0.015, y:0.35, w:0.18, h:0.14},
+    {x:0.015, y:0.50, w:0.18, h:0.14},
+    {x:0.015, y:0.65, w:0.18, h:0.14},
+    {x:0.205, y:0.65, w:0.18, h:0.14},
+    {x:0.395, y:0.65, w:0.18, h:0.14},
+    {x:0.395, y:0.50, w:0.18, h:0.14}
 ];
 const gridColor = ["#FFB3BA","#FFDFBA","#FFFFBA","#BAFFC9","#BAE1FF","#FFB3BA","#FFDFBA","#FFFFBA","#BAFFC9","#BAE1FF","#FFB3BA","#FFDFBA","#FFFFBA","#BAFFC9","#BAE1FF","#FFB3BA","#FFDFBA","#FFFFBA","#BAFFC9"];
 
@@ -428,11 +441,6 @@ function unlockAudio(){
     if(audioUnlocked) return;
     audioUnlocked = true;
     playAudio(soundUnlock);
-    if(!musicPlay){
-        bgMusic.play().catch(e=>{});
-        musicPlay = true;
-        musicToggle.innerText = "关闭背景音乐";
-    }
 }
 
 musicToggle.onclick = function(){
@@ -493,6 +501,13 @@ function setDice(num){
 
 diceBtn.onclick = async function(){
     unlockAudio();
+    // 掷骰子时自动开启背景音乐
+    if(!musicPlay){
+        bgMusic.play().catch(e=>{});
+        musicPlay = true;
+        musicToggle.innerText = "关闭背景音乐";
+    }
+
     if(moving) return;
     moving = true;
     diceBtn.disabled = true;
