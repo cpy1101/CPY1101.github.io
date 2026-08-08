@@ -186,7 +186,7 @@ html,body{
     display:none;
     position:fixed;
     inset:0;
-    background:transparent;
+    background:rgba(0,0,0,0.45);
     z-index:999;
     align-items:center;
     justify-content:center;
@@ -354,26 +354,26 @@ const soundWrong = document.getElementById("soundWrong");
 const soundWin = document.getElementById("soundWin");
 const soundUnlock = document.getElementById("soundUnlock");
 
-bgMusic.volume = 0.28;
+bgMusic.volume = AUDIO_VOLUME;
 soundDice.volume = AUDIO_VOLUME;
 soundStep.volume = AUDIO_VOLUME;
 soundBack.volume = AUDIO_VOLUME;
 soundRight.volume = AUDIO_VOLUME;
 soundWrong.volume = AUDIO_VOLUME;
-soundWin.volume = 0.65;
-soundUnlock.volume = 0.3;
+soundWin.volume = AUDIO_VOLUME;
+soundUnlock.volume = AUDIO_VOLUME;
 
 const questionList = [
     {q:"同学长期给他人起侮辱外号、故意孤立他人，属于？",opts:["正常玩笑","校园欺凌","友好互动"],answer:1,explain:"语言侮辱、社交孤立都属于校园欺凌，遇到要及时告诉老师家长。",encourage:"很棒！分清什么是校园欺凌！"},
     {q:"遭遇校园欺凌，合适的做法是？",opts:["默默忍受","告诉老师家长","找人报复对方"],answer:1,explain:"不要隐忍，也不要以暴制暴，寻求成年人保护是正确选择。",encourage:"做得对！遇到伤害一定要求助！"},
-    {q:"看见同学被欺凌，我们应该？",opts:["围观起哄","保证安全前提下报告老师","装作没看见"],answer:1,explain:"不要盲目上前冲突，优先报告老师，避免自己受到伤害。",encourage:"有正义感，懂得保护自己！"},
+    {q:"看见同学被欺凌，我们应该？",opts:["围观起哄","保证安全前提下报告老师","装作没看见"],answer:1,explain:"不要盲目上前冲突，优先报告老师，保护自身安全。",encourage:"有正义感，懂得保护自己！"},
     {q:"网上P丑图造谣辱骂同学属于？",opts:["普通玩梗","网络欺凌","不算违法"],answer:1,explain:"网络造谣、恶意P图属于网络欺凌，同样需要承担责任。",encourage:"正确！网络不是法外之地！"},
     {q:"陌生人给饮料零食，我们应当？",opts:["直接收下","礼貌拒绝离开","道谢收下"],answer:1,explain:"不要随意接受陌生人食物，保护自身安全。",encourage:"很棒！提高警惕保护自己！"},
     {q:"关于毒品说法正确的是？",opts:["尝一次没事","远离毒品，绝不尝试","只有大人才会吸毒"],answer:1,explain:"毒品危害极大，无论什么情况都不能触碰。",encourage:"正确！珍爱生命远离毒品！"},
-    {q:"有人让你保守身体被侵犯的秘密，你应该？",opts:["守口如瓶","告诉信任的长辈","害怕不敢说"],answer:1,explain:"让你不舒服、受伤害的秘密不需要守住，勇敢告诉大人。",encourage:"记住，受伤害不是你的错！"},
-    {q:"下面哪一个属于隐私部位？",opts:["手掌","背心和内裤覆盖区域","额头"],answer:1,explain:"背心、内裤遮盖的身体部位属于隐私部位，不允许别人随意触碰。",encourage:"很好，懂得保护身体隐私！"},
-    {q:"网友索要你的家庭住址、学校，你应该？",opts:["直接发送","拒绝并告诉家长","好奇就给对方"],answer:1,explain:"家庭、学校属于个人隐私，不能随意透露给网络陌生人。",encourage:"保护个人信息，非常重要！"},
-    {q:"和同学发生矛盾，正确做法？",opts:["争吵动手","冷静沟通找老师调解","一直冷战"],answer:1,explain:"有矛盾可以沟通，解决不了就找老师帮忙，不要激化冲突。",encourage:"学会理性处理矛盾！"},
+    {q:"有人让你保守身体被侵犯的秘密，你应该？",opts:["守口如瓶","告诉信任的长辈","害怕不敢说"],answer:1,explain:"让你受伤害的秘密不需要守住，勇敢告诉大人。",encourage:"记住，受伤害不是你的错！"},
+    {q:"下面哪一个属于隐私部位？",opts:["手掌","背心和内裤覆盖区域","额头"],answer:1,explain:"背心、内裤遮盖的身体部位属于隐私部位，不许别人随意触碰。",encourage:"很好，懂得保护身体隐私！"},
+    {q:"网友索要你的家庭住址、学校，你应该？",opts:["直接发送","拒绝并告诉家长","好奇就给对方"],answer:1,explain:"家庭、学校属于个人隐私，不能随便透露给网络陌生人。",encourage:"保护个人信息，非常重要！"},
+    {q:"和同学发生矛盾，正确做法？",opts:["争吵动手","冷静沟通找老师调解","一直冷战"],answer:1,explain:"有矛盾好好沟通，解决不了找老师帮忙，不要激化冲突。",encourage:"学会理性处理矛盾！"},
     {q:"遇到有人在校索要财物，我们应该？",opts:["上前制止","远离并报告老师","假装没看见"],answer:1,explain:"优先保证自身安全，第一时间向老师报告。",encourage:"懂得保护自己，机智应对！"},
     {q:"对于校园欺凌，以下说法正确的是？",opts:["受害者自己解决","欺凌是错误的，旁观者也可以帮助受害者","只有打架才算欺凌"],answer:1,explain:"欺凌不只是打架，语言、孤立、造谣都属于欺凌。",encourage:"很好，全面认识校园欺凌！"}
 ];
@@ -491,7 +491,6 @@ function setDice(num){
     diceEl.style.transform = rotate;
 }
 
-// 掷骰子：N点严格前进N步
 diceBtn.onclick = async function(){
     unlockAudio();
     if(moving) return;
@@ -499,29 +498,33 @@ diceBtn.onclick = async function(){
     diceBtn.disabled = true;
     playAudio(soundDice);
     diceEl.classList.add("dice-shake");
+
     const num = Math.floor(Math.random()*6)+1;
     await sleep(350);
     diceEl.classList.remove("dice-shake");
     setDice(num);
 
-    for(let i = 0; i < num; i++){
-        pos += 1;
-        if(pos >= totalCell){
-            pos = totalCell -1;
-            updatePlayer();
-            setTimeout(()=>{
-                playAudio(soundWin);
-                winModal.style.display = "flex";
-                moving = false;
-                diceBtn.disabled = false;
-            },400);
-            return;
-        }
+    //A规则：骰子摇到几，就向前走几步
+    let targetPos = pos + num;
+    const maxIndex = totalCell - 1;
+    if(targetPos > maxIndex){
+        targetPos = maxIndex;
+    }
+
+    while(pos < targetPos){
+        pos ++;
         updatePlayer();
         playAudio(soundStep);
         await sleep(400);
     }
+
     moving = false;
+    if(pos >= maxIndex){
+        playAudio(soundWin);
+        winModal.style.display = "flex";
+        diceBtn.disabled = false;
+        return;
+    }
     showQuiz();
 };
 
